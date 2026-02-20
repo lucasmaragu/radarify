@@ -1,35 +1,55 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
-import { onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 
-const showingNavigationDropdown = ref(false);
+let spotifyInterval = null;
 
-
-let globalSyncInterval = null;
-
-const pushMySpotifyState = async () => {
+const syncSpotify = async () => {
     try {
         await axios.post('/spotify/sync-playback');
     } catch (error) {
-        console.error('Error actualizando mi estado:', error);
+        console.error('Error sincronizando Spotify:', error);
     }
 };
 
+let watcherId = null;
+
+const startLocationTracking = () => {
+    if (!navigator.geolocation) return;
+
+    watcherId = navigator.geolocation.watchPosition(
+        async (position) => {
+            try {
+                await axios.post('/location/update', {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+            } catch (error) {
+                console.error('Error actualizando ubicación:', error);
+            }
+        },
+        (error) => console.warn("Error GPS:", error.message),
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
+    );
+};
+
 onMounted(() => {
-    pushMySpotifyState();
-    globalSyncInterval = setInterval(pushMySpotifyState, 10000);
+    syncSpotify();
+    spotifyInterval = setInterval(syncSpotify, 10000);
+    startLocationTracking();
 });
 
 onUnmounted(() => {
-    clearInterval(globalSyncInterval);
+    clearInterval(spotifyInterval);
+    if (watcherId) navigator.geolocation.clearWatch(watcherId);
 });
+
 </script>
 
 <template>

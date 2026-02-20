@@ -6,6 +6,7 @@ use App\Http\Controllers\Spotify\SyncPlaybackController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Radar\RadarIndexController;
 use App\Http\Controllers\Radar\RadarSyncController;
+use App\Http\Controllers\Location\UpdateLocationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,13 +39,19 @@ Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::post('/spotify/sync-playback', SyncPlaybackController::class)
-    ->middleware('auth')
-    ->name('spotify.sync-playback');
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/radar', RadarIndexController::class)->name('radar.index');
     Route::get('/radar/sync', RadarSyncController::class)->name('radar.sync');
 });
+
+Route::post('/spotify/sync-playback', SyncPlaybackController::class)
+    ->middleware('auth')
+    ->name('spotify.sync-playback');
+
+Route::post('/location/update', UpdateLocationController::class)
+    ->middleware('auth')
+    ->name('location.update');
+
+
 
 require __DIR__.'/auth.php';

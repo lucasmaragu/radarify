@@ -11,10 +11,12 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'spotify_id' => fake()->unique()->regexify('[A-Za-z0-9]{20}'), 
-            'avatar' => 'https://i.pravatar.cc/150?u=' . fake()->uuid(), 
+            'spotify_id' => fake()->unique()->regexify('[A-Za-z0-9]{20}'),
+            'avatar' => 'https://i.pravatar.cc/150?u=' . fake()->uuid(),
             'spotify_access_token' => fake()->regexify('[A-Za-z0-9]{50}'),
             'spotify_refresh_token' => fake()->regexify('[A-Za-z0-9]{50}'),
+            'latitude' => fake()->latitude(41.30, 41.45), 
+            'longitude' => fake()->longitude(2.00, 2.30),
         ];
     }
 }
