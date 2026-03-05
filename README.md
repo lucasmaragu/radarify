@@ -13,7 +13,7 @@ Radarify es una aplicación web *mobile-first* que actúa como un radar social m
 * **Autenticación Segura (OAuth2):** Inicio de sesión nativo e integración directa con la API de Spotify.
 * **Motor Geoespacial (PostGIS):** Cálculo de distancias preciso teniendo en cuenta la curvatura de la Tierra mediante `ST_DWithin` y `ST_Distance`.
 * **Sincronización Asíncrona:** * Motor de polling por intervalos para mantener actualizado el estado de reproducción (canción actual).
-    * Motor reactivo basado en eventos (`watchPosition`) para actualizar la ubicación solo cuando el usuario se mueve en el mundo real, optimizando el rendimiento.
+  * Motor reactivo basado en eventos (`watchPosition`) para actualizar la ubicación solo cuando el usuario se mueve en el mundo real, optimizando el rendimiento.
 * **Arquitectura Limpia (SOLID):** Backend estructurado en Laravel utilizando *Single Action Controllers* (Controladores Invokables) y *Actions* dedicadas, logrando un desacoplamiento total entre la lógica musical y la de geolocalización.
 * **UI/UX Mobile-First:** Interfaz oscura, minimalista y moderna construida con Vue 3 (Composition API), Inertia.js y Tailwind CSS, diseñada para sentirse como una app nativa.
 
@@ -37,51 +37,99 @@ Radarify es una aplicación web *mobile-first* que actúa como un radar social m
 ### Requisitos Previos
 * Docker y Docker Compose instalados.
 * Node.js y NPM.
-* Una cuenta de desarrollador en [Spotify for Developers](https://developer.spotify.com/dashboard) para obtener tu `Client ID` y `Client Secret`.
+* Una cuenta de desarrollador en [Spotify for Developers](https://developer.spotify.com/) para obtener tu `Client ID` y `Client Secret`.
 
 ### Pasos para levantar el proyecto
 
 1. **Clona el repositorio:**
-   ```bash
-   git clone [https://github.com/tu-usuario/radarify.git](https://github.com/tu-usuario/radarify.git)
-   cd radarify
+
+    ```bash
+    git clone [https://github.com/tu-usuario/radarify.git](https://github.com/tu-usuario/radarify.git)
+    cd radarify
+    ```
 
 2. **Instala las dependencias de PHP (usando un contenedor temporal):**
-   ```bash
-   docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -v "$(pwd):/var/www/html" \
-    -w /var/www/html \
-    laravelsail/php83-composer:latest \
-    composer install --ignore-platform-reqs
+
+    ```bash
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php83-composer:latest \
+        composer install --ignore-platform-reqs
+    ```
 
 3. **Configura el entorno:**
-   Copia el archivo de ejemplo y configura tus variables. Añadiendo tus credenciales de Spotify en el .env.
-   ```bash
+   Copia el archivo de ejemplo para configurar tus variables.
+
+    ```bash
     cp .env.example .env
+    ```
+
+   Abre el archivo `.env` recién creado y añade tus credenciales de Spotify:
+
+    ```env
     SPOTIFY_CLIENT_ID=tu_client_id
     SPOTIFY_CLIENT_SECRET=tu_client_secret
     SPOTIFY_REDIRECT_URI=http://localhost:8000/auth/spotify/callback
-    
-5. **Levanta los contenedores con Laravel Sail:**
-   ```bash
-   ./vendor/bin/sail up -d
-   
-6. **Prepara la Base de Datos:**
+    ```
+
+4. **Levanta los contenedores con Laravel Sail:**
+
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
+
+5. **Prepara la Base de Datos:**
    Genera la clave de la app y ejecuta las migraciones (esto creará las tablas con soporte PostGIS).
-   ```bash
-   ./vendor/bin/sail artisan key:generate
-   ./vendor/bin/sail artisan migrate
-   
-7. **Compila el Frontend:**
-   Debido a que el proyecto utiliza Vite 7 (Tailwind 4) y el plugin oficial de Vue requiere Vite 6, es necesario usar el flag de dependencias      legacy durante la instalación:
-   ```bash
-   npm install --legacy-peer-deps
-   npm run dev
+
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ./vendor/bin/sail artisan migrate
+    ```
+
+6. **Compila el Frontend:**
+   Debido a que el proyecto utiliza Vite 7 (Tailwind 4) y el plugin oficial de Vue requiere Vite 6, es necesario usar el flag de dependencias legacy durante la instalación:
+
+    ```bash
+    npm install --legacy-peer-deps
+    npm run dev
+    ```
+
+---
+
+## 📱 Entorno de Pruebas (Mobile & HTTPS)
+
+Dado que la API de Geolocalización de HTML5 (`navigator.geolocation`) requiere un contexto seguro (HTTPS) para funcionar en dispositivos móviles, el entorno de desarrollo local necesita exponerse a través de un túnel seguro si se desea probar en la calle.
+
+Para probar la precisión del radar y el cálculo PostGIS en un dispositivo físico real:
+
+1. Compila los assets (evitando el servidor de desarrollo de Vite en el móvil):
+
+    ```bash
+    npm run build
+    ```
+
+2. Levanta un túnel seguro (ej. Ngrok) apuntando al puerto de Sail (8000):
+
+    ```bash
+    ngrok http 8000
+    ```
+
+3. Actualiza las variables de entorno en tu `.env` para forzar las cookies seguras y permitir el callback de Spotify a través del túnel:
+
+    ```env
+    APP_URL=[https://tu-url.ngrok-free.app](https://tu-url.ngrok-free.app)
+    SPOTIFY_REDIRECT_URI=[https://tu-url.ngrok-free.app/auth/spotify/callback](https://tu-url.ngrok-free.app/auth/spotify/callback)
+    SESSION_SECURE_COOKIE=true
+    SESSION_DOMAIN=
+    ```
+
+---
 
 ## 🤝 Contribuciones
 
-¡Las contribuciones son bienvenidas! Si tienes alguna idea para mejorar el radar o añadir nuevas funcionalidades (como reproducir la canción al hacer clic en un usuario), siéntete libre de abrir una Issue o un Pull Request.
+¡Las contribuciones son bienvenidas! Si tienes alguna idea para mejorar el radar o añadir nuevas funcionalidades (como reproducir la canción al hacer clic en un usuario), siéntete libre de abrir una *Issue* o un *Pull Request*.
 
 ## 📄 Licencia
 
