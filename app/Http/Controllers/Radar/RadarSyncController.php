@@ -11,7 +11,7 @@ class RadarSyncController extends Controller
 {
     public function __invoke(Request $request, GetNearbyPlaybacksAction $action): JsonResponse
     {
-        $playbacks = $action->execute($request->user(), 100);
+        $playbacks = $action->execute($request->user(), 10000000);
 
         return response()->json([
             'playbacks' => $playbacks

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class GetNearbyPlaybacksAction
 {
-    public function execute(User $user, int $radiusInMeters = 100): Collection
+    public function execute(User $user, int $radiusInMeters = 100000000000): Collection
     {
         if (!$user->location) {
             return new Collection();
