@@ -74,8 +74,9 @@ Radarify es una aplicación web *mobile-first* que actúa como un radar social m
    ./vendor/bin/sail artisan migrate
    
 7. **Compila el Frontend:**
+   Debido a que el proyecto utiliza Vite 7 (Tailwind 4) y el plugin oficial de Vue requiere Vite 6, es necesario usar el flag de dependencias      legacy durante la instalación:
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    npm run dev
 
 ## 🤝 Contribuciones
