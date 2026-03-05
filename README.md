@@ -1,59 +1,136 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 📡 Radarify - Real-Time Spotify Proximity Radar
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_+-PostGIS-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Spotify](https://img.shields.io/badge/Spotify_API-1DB954?style=for-the-badge&logo=spotify&logoColor=white)
 
-## About Laravel
+Radarify es una aplicación web *mobile-first* que actúa como un radar social musical. Te permite descubrir en tiempo real qué están escuchando en Spotify las personas que se encuentran físicamente cerca de ti (en un radio de 100 metros).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Características Principales
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* **Autenticación Segura (OAuth2):** Inicio de sesión nativo e integración directa con la API de Spotify.
+* **Motor Geoespacial (PostGIS):** Cálculo de distancias preciso teniendo en cuenta la curvatura de la Tierra mediante `ST_DWithin` y `ST_Distance`.
+* **Sincronización Asíncrona:** * Motor de polling por intervalos para mantener actualizado el estado de reproducción (canción actual).
+  * Motor reactivo basado en eventos (`watchPosition`) para actualizar la ubicación solo cuando el usuario se mueve en el mundo real, optimizando el rendimiento.
+* **Arquitectura Limpia (SOLID):** Backend estructurado en Laravel utilizando *Single Action Controllers* (Controladores Invokables) y *Actions* dedicadas, logrando un desacoplamiento total entre la lógica musical y la de geolocalización.
+* **UI/UX Mobile-First:** Interfaz oscura, minimalista y moderna construida con Vue 3 (Composition API), Inertia.js y Tailwind CSS, diseñada para sentirse como una app nativa.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Stack Tecnológico
 
-## Learning Laravel
+**Backend:**
+* Laravel 11
+* PostgreSQL + extensión PostGIS (Manejo de coordenadas geográficas)
+* Laravel Sail (Entorno Dockerizado)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+**Frontend:**
+* Vue 3 (Composition API)
+* Inertia.js (Enrutamiento monolítico sin API REST intermedia)
+* Tailwind CSS v4
+* Lucide Icons
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚀 Instalación y Despliegue Local
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Requisitos Previos
+* Docker y Docker Compose instalados.
+* Node.js y NPM.
+* Una cuenta de desarrollador en [Spotify for Developers](https://developer.spotify.com/) para obtener tu `Client ID` y `Client Secret`.
 
-### Premium Partners
+### Pasos para levantar el proyecto
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Clona el repositorio:**
 
-## Contributing
+    ```bash
+    git clone [https://github.com/tu-usuario/radarify.git](https://github.com/tu-usuario/radarify.git)
+    cd radarify
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Instala las dependencias de PHP (usando un contenedor temporal):**
 
-## Code of Conduct
+    ```bash
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php83-composer:latest \
+        composer install --ignore-platform-reqs
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Configura el entorno:**
+   Copia el archivo de ejemplo para configurar tus variables.
 
-## Security Vulnerabilities
+    ```bash
+    cp .env.example .env
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   Abre el archivo `.env` recién creado y añade tus credenciales de Spotify:
 
-## License
+    ```env
+    SPOTIFY_CLIENT_ID=tu_client_id
+    SPOTIFY_CLIENT_SECRET=tu_client_secret
+    SPOTIFY_REDIRECT_URI=http://localhost:8000/auth/spotify/callback
+    ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **Levanta los contenedores con Laravel Sail:**
+
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
+
+5. **Prepara la Base de Datos:**
+   Genera la clave de la app y ejecuta las migraciones (esto creará las tablas con soporte PostGIS).
+
+    ```bash
+    ./vendor/bin/sail artisan key:generate
+    ./vendor/bin/sail artisan migrate
+    ```
+
+6. **Compila el Frontend:**
+   Debido a que el proyecto utiliza Vite 7 (Tailwind 4) y el plugin oficial de Vue requiere Vite 6, es necesario usar el flag de dependencias legacy durante la instalación:
+
+    ```bash
+    npm install --legacy-peer-deps
+    npm run dev
+    ```
+
+---
+
+## 📱 Entorno de Pruebas (Mobile & HTTPS)
+
+Dado que la API de Geolocalización de HTML5 (`navigator.geolocation`) requiere un contexto seguro (HTTPS) para funcionar en dispositivos móviles, el entorno de desarrollo local necesita exponerse a través de un túnel seguro si se desea probar en la calle.
+
+Para probar la precisión del radar y el cálculo PostGIS en un dispositivo físico real:
+
+1. Compila los assets (evitando el servidor de desarrollo de Vite en el móvil):
+
+    ```bash
+    npm run build
+    ```
+
+2. Levanta un túnel seguro (ej. Ngrok) apuntando al puerto de Sail (8000):
+
+    ```bash
+    ngrok http 8000
+    ```
+
+3. Actualiza las variables de entorno en tu `.env` para forzar las cookies seguras y permitir el callback de Spotify a través del túnel:
+
+    ```env
+    APP_URL=[https://tu-url.ngrok-free.app](https://tu-url.ngrok-free.app)
+    SPOTIFY_REDIRECT_URI=[https://tu-url.ngrok-free.app/auth/spotify/callback](https://tu-url.ngrok-free.app/auth/spotify/callback)
+    SESSION_SECURE_COOKIE=true
+    SESSION_DOMAIN=
+    ```
+
+---
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Si tienes alguna idea para mejorar el radar o añadir nuevas funcionalidades (como reproducir la canción al hacer clic en un usuario), siéntete libre de abrir una *Issue* o un *Pull Request*.
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
